@@ -27,6 +27,8 @@
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
     $(function () {
+      var socket = io();
+
       $('form').submit(function(){
         socket.emit('new message', {
           'nickname':$('#nickname').text(),

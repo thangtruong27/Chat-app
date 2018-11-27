@@ -19,8 +19,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/message', function (req, res) {
-    users.push(req.body.nickname);
-    res.render('message', { nickname: req.body.nickname});
+    res.render('message', { nickname: req.body.nickname });
 });
 
 io.on('connection', function (socket) {
@@ -31,12 +30,17 @@ io.on('connection', function (socket) {
         socket.broadcast.emit('new message', msg);
         console.log(msg);
     });
-    
+
     socket.on('typing', function (nickname) {
         socket.broadcast.emit('typing', nickname);
     });
 
-    socket.on('stop typing', function( nickname){
+    socket.on('new message', function (msg) {
+        console.log(msg);
+        socket.emit('new message', msg);
+    });
+
+    socket.on('stop typing', function (nickname) {
         socket.broadcast.emit('stop typing', nickname);
     });
 
