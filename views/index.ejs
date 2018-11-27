@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+    body {
+        padding: 50px;
+        font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    }    
+    a {
+        color: #00B7FF;
+    }
+    input {
+        padding: 3px;
+        margin: 5px;
+        width: 300px;
+    }
+    button {
+        padding: 3px;
+    }
+  </style>
+    <title>Chat-app</title>
+</head>
+<body>
+    <h1>Welcome to chat-app</h1>
+    <form action="/message" method="POST">
+        <input name="nickname" type="text" placeholder="please enter your nickname here..." required >
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
