@@ -57,7 +57,6 @@
 
       socket.on('typing', function(nickname){
         $('#messages').append($(`<li id="${nickname}isTyping">`).text(`${nickname} is typing`));
-        window.scrollTo(0, document.body.scrollHeight);
       });
 
     });

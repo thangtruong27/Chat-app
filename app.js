@@ -34,12 +34,6 @@ io.on('connection', function (socket) {
     socket.on('typing', function (nickname) {
         socket.broadcast.emit('typing', nickname);
     });
-
-    socket.on('new message', function (msg) {
-        console.log(msg);
-        socket.emit('new message', msg);
-    });
-
     socket.on('stop typing', function (nickname) {
         socket.broadcast.emit('stop typing', nickname);
     });
