@@ -6,7 +6,7 @@ const io = require('socket.io')(http);
 const bodyReq = require('body-parser');
 const port = 3000;
 
-var users = [];
+var msgs = [];
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -14,6 +14,7 @@ app.set('view engine', 'ejs');
 
 app.use(bodyReq.urlencoded({ extended: false }));
 
+/*  Route   */
 app.get('/', function (req, res) {
     res.render('index');
 });
@@ -22,13 +23,15 @@ app.post('/message', function (req, res) {
     res.render('message', { nickname: req.body.nickname });
 });
 
+/*  Connection Handle  */
 io.on('connection', function (socket) {
-    console.log('A user connected');
-    console.log(users);
+    console.log('A user connected');    
+    io.to(socket.id).emit('add participants messages', msgs);
+
     socket.on('new message', function (msg) {
         socket.emit('new message', msg);
         socket.broadcast.emit('new message', msg);
-        console.log(msg);
+        msgs.push(msg);
     });
 
     socket.on('typing', function (nickname) {
