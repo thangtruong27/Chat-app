@@ -1,33 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style>
-    body {
-        padding: 50px;
-        font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+
+    html,body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
     }    
-    a {
-        color: #00B7FF;
+    body{
+        background-color: #696969;
     }
+
+    .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    p {
+        margin: 0;
+        padding: auto;
+        font-size: 40px;
+        text-align: center;
+        color: #fff;
+    }
+
     input {
-        padding: 3px;
-        margin: 5px;
-        width: 300px;
+        display: block;
+        margin: auto;
+        border: none;
+        background-color: #696969; 
+        border-bottom: 2px solid #fff;  
+        padding-bottom: 15px;   
+        text-align: center;
+        outline: none;
+        color: #fff;
+        font-size: 35px;
     }
-    button {
-        padding: 3px;
-    }
+    
   </style>
     <title>Chat-app</title>
 </head>
-<body>
-    <h1>Welcome to chat-app</h1>
-    <form action="/message" method="POST">
-        <input name="nickname" type="text" placeholder="please enter your nickname here..." required >
-        <button type="submit">Send</button>
+
+<body class="container">
+    <p>What's your nickname?</p>
+    <form action="/messenger" method="POST">            
+        <input name="nickname" autofocus autocomplete="off" type="text" required>
     </form>
 </body>
+
 </html>

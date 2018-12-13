@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Messeger</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body class="flex-container">
+    <div class="control-panel">
+        <div class="tab">
+            <button class="tab-link" onclick="openTab(event, 'recent')">Recent</button>
+            <button class="tab-link" id="btn-active-users" onclick="openTab(event, 'active-users')">Active users</button>
+        </div>
+        <div id="recent" class="tab-content">
+            <ul class="list-recent-msgs"></ul>
+        </div>
+        <div id="active-users" class="tab-content">
+            <ul class="list-active-users"></ul>
+        </div>
+    </div>
+    <div class="messages">
+        <p></p>
+        <div class="msgs-area">
+            <ul class="list-msgs">
+
+            </ul>
+        </div>
+        <form class="msg-input flex-container" action="">
+                <input type="text" class="txt-input" placeholder="Text a message...">
+                <i class="fas fa-image fa-4x"></i>
+                <button type="submit" class="btn-send">Send</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    document.getElementById("btn-active-users").click();
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $(function () {
+        var socket = io();
+
+        socket.emit('new active user',$('#nickname').text());             
+
+        $('form').submit(function () {
+            let msg = $('.txt-input').val();
+            socket.emit('new message', {
+                'nickname': $('#nickname').text(),
+                'message': msg
+            });
+            $('.txt-input').val('');
+            $('.list-msgs').append($('<li style="float:right; background-color:#4081C9; color: #fff">').text(`${msg}`));
+            console.log($('.txt-input').val());            
+            return false;
+        });
+
+        $('.txt-input').focus(function () {
+            socket.emit('typing', $('#nickname').text());
+        });
+
+        $('.txt-input').focusout(function () {
+            socket.emit('stop typing', $('#nickname').text());  
+        });
+        
+        socket.on('add active users', function(users){
+            users.forEach(user => {
+                $('.list-active-users').append($('<li>').text(`${user.nickname} is online`));
+            });            
+        });
+
+        socket.on('new active user', function(nickname){
+            $('.list-active-users').append($('<li>').text(`${nickname} is online`));
+        });
+
+        socket.on('add participants messages', function (msgs) {
+            msgs.forEach(msg => {
+                $('.list-msgs').append($('<li>').text(`${msg.nickname}: ${msg.message}`));
+            });
+        });
+
+        socket.on('new message', function (msg) {
+            $('.list-msgs').append($('<li>').text(`${msg.nickname}: ${msg.message}`));
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        socket.on('stop typing', function (nickname) {
+            $('.list-msgs').find(`#${nickname}isTyping`).remove();
+        });
+
+        socket.on('typing', function (nickname) {
+            $('.list-msgs').append($(`<li id="${nickname}isTyping">`).text(`${nickname} is typing`));
+        });
+
+    });
+</script>
