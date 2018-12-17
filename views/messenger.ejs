@@ -25,14 +25,15 @@
         </div>
     </div>
     <div class="messages">
-        <p></p>
+        <div class="nickname-container">
+            <div>Your nickname:<div id="nickname"><%= nickname %></div></div>
+        </div>
         <div class="msgs-area">
-            <ul class="list-msgs">
-
+            <ul class="list-msgs">                            
             </ul>
         </div>
         <form class="msg-input flex-container" action="">
-                <input type="text" class="txt-input" placeholder="Text a message...">
+                <input type="text" class="txt-input" placeholder="Text a message..." required>
                 <i class="fas fa-image fa-4x"></i>
                 <button type="submit" class="btn-send">Send</button>
         </form>
@@ -69,11 +70,12 @@
             let msg = $('.txt-input').val();
             socket.emit('new message', {
                 'nickname': $('#nickname').text(),
-                'message': msg
+                'data': msg
             });
             $('.txt-input').val('');
-            $('.list-msgs').append($('<li style="float:right; background-color:#4081C9; color: #fff">').text(`${msg}`));
-            console.log($('.txt-input').val());            
+            $('.list-msgs').append($('<li style="" class="msg-owner">').text(`${msg}`));
+            const msgs = document.getElementsByClassName("msgs-area")[0];            
+            msgs.scrollTop = msgs.scrollHeight-msgs.clientHeight; 
             return false;
         });
 
@@ -97,13 +99,16 @@
 
         socket.on('add participants messages', function (msgs) {
             msgs.forEach(msg => {
-                $('.list-msgs').append($('<li>').text(`${msg.nickname}: ${msg.message}`));
+                $('.list-msgs').append($('<li class="msg-nickname">').text(`${msg.nickname}`));
+                $('.list-msgs').append($('<li class="msg-data">').text(`${msg.data}`));
             });
         });
 
         socket.on('new message', function (msg) {
-            $('.list-msgs').append($('<li>').text(`${msg.nickname}: ${msg.message}`));
-            window.scrollTo(0, document.body.scrollHeight);
+            $('.list-msgs').append($('<li class="msg-nickname">').text(`${msg.nickname}`));
+            $('.list-msgs').append($('<li class="msg-data">').text(`${msg.data}`));                       
+            const msgs = document.getElementsByClassName("msgs-area")[0];            
+            msgs.scrollTop = msgs.scrollHeight-msgs.clientHeight;        
         });
 
         socket.on('stop typing', function (nickname) {
@@ -111,7 +116,7 @@
         });
 
         socket.on('typing', function (nickname) {
-            $('.list-msgs').append($(`<li id="${nickname}isTyping">`).text(`${nickname} is typing`));
+            $('.list-msgs').append($(`<li class="msg-typing" id="${nickname}isTyping">`).text(`${nickname} is typing`));
         });
 
     });

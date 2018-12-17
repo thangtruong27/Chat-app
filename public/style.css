@@ -4,24 +4,24 @@ html,body{
     font-family: "Times New Roman", Georgia, Serif;   
 }
 body{
-    border-style: solid;
-    border-width: 1px;
     padding: 0px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .flex-container{
     display: flex;
 }
 
 .control-panel{
-    width: 30%;
+    width: 20%;
     height: 100%;
-    border-right-style:  solid;
+    background-color: #4081C9;
     border-width: 1px;
-    overflow: scroll;
+    color: #e1e1e1;
+    overflow: auto;
 }
 /* Style messages area */
 .messages{
-    width: 70%;
+    width: 80%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -29,14 +29,16 @@ body{
 
 /* Style the tab */
 .tab {
+    background-color: #3974b4;
     position: sticky;     
     height: 10%;
     overflow: hidden;
-    border: 1px solid #ccc;
 }
   
 /* Style the buttons inside the tab */
-.tab button {  
+.tab button {
+    width: 50%;  
+    color: #fff;
     position: sticky;  
     height: 100%;
     background-color: inherit;
@@ -51,12 +53,12 @@ body{
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-    background-color: #d4d4d4;
+    background-color: #3367a0;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-    background-color: #ccc;
+    background-color: #3367a0;
 }
 
 .list-active-users{
@@ -66,25 +68,23 @@ body{
 }
 
 .list-active-users li {
-
-    border-bottom: 1px #ccc solid;
     padding: 5px;
+    margin-bottom: 5px;
+    color: #e1e1e1;
 }
 
 /* Style messages are */
-#nickname{
+.nickname-container{
     height: 10%;
     border-bottom-style: solid;
     border-width: 1px;
+    border-color: #e1e1e1;
     padding: 10px;
     box-sizing: border-box;
 }
 .msgs-area{
     height: 80%;
-    border-bottom-style: solid;
-    border-width: 1px;
     overflow: auto;  
-
 }
 .list-msgs{
     padding: 0px;  
@@ -94,30 +94,56 @@ body{
     clear: both;
     float: left;
     border-radius: 5px;
-    background-color: #E0D9C6;
     padding: 5px;
-    margin: 5px;
+    margin-left: 5px;
 }
 
+.list-msgs .msg-nickname{
+    padding: 0px;
+    margin-left: 6px;
+    color: #696969;
+}
+.list-msgs .msg-data{
+    background-color: #696969;
+    font-size: 16px;
+    color: #e1e1e1;
+    margin-bottom: 8px;
+}
+.list-msgs .msg-owner{
+    margin-bottom: 5px;
+    margin-right: 5px;
+    float:right; 
+    background-color:#4081C9;
+    color: #e1e1e1; 
+}
+.list-msgs .msg-typing{
+    padding: 0px;
+    margin-left: 6px;
+    color: #696969;
+}
 /* Style message input */
 .msg-input{
     height: 10%;
+    background-color: #f5f5f5;
 }
 
 .txt-input{
+    padding-left: 5px;
+    background-color: #f5f5f5;
+    color: #696969;
     border: none;
     width: 80%;    
+    outline: none;
 }
 
 .fas{
-    margin-bottom: 7px;
-    color: #696969;
+    color: #4081C9;
 }
 .btn-send{
     width: 10%;
-    background-color:#696969;
+    background-color:#4081C9;
     border: none;
-    color: white;
+    color: #e1e1e1;
     text-align: center;
     text-decoration: none;
     font-size: 16px;
