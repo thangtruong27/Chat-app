@@ -29,13 +29,18 @@
             <div>Your nickname:<div id="nickname"><%= nickname %></div></div>
         </div>
         <div class="msgs-area">
-            <ul class="list-msgs">                            
+            <ul class="list-msgs">
+            </ul>
+            <ul class="list-typing-msgs">                
             </ul>
         </div>
         <form class="msg-input flex-container" action="">
-                <input type="text" class="txt-input" placeholder="Text a message..." required>
-                <i class="fas fa-image fa-4x"></i>
-                <button type="submit" class="btn-send">Send</button>
+            <input type="text" class="txt-input" placeholder="Text a message..." required>
+            <label for="file-input" style="cursor: pointer; ">
+                <i class="fas fa-image fa-align-center fa-4x"></i>
+            </label>            
+            <input id="file-input" style="display:none" type="file" >
+            <button type="submit" class="btn-send">Send</button>
         </form>
     </div>
 
@@ -63,61 +68,99 @@
 <script>
     $(function () {
         var socket = io();
+        
+        const nickname = $('#nickname').text();
+        socket.emit('new active user',nickname);
 
-        socket.emit('new active user',$('#nickname').text());             
-
+        /*Trigger event when user sent a messgae*/
         $('form').submit(function () {
             let msg = $('.txt-input').val();
             socket.emit('new message', {
-                'nickname': $('#nickname').text(),
-                'data': msg
+                'nickname': nickname,
+                'data': msg,
+                'type': 'text'
             });
             $('.txt-input').val('');
             $('.list-msgs').append($('<li style="" class="msg-owner">').text(`${msg}`));
-            const msgs = document.getElementsByClassName("msgs-area")[0];            
-            msgs.scrollTop = msgs.scrollHeight-msgs.clientHeight; 
+            const msgs = document.getElementsByClassName("msgs-area")[0];
+            msgs.scrollTop = msgs.scrollHeight - msgs.clientHeight;
             return false;
         });
 
-        $('.txt-input').focus(function () {
-            socket.emit('typing', $('#nickname').text());
+        /*Trigger even when user selected a image*/
+        $('#file-input').change(function(){
+            const selector = document.getElementById("file-input");        
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                //img.src = e.target.result;
+                socket.emit("new a image", { 
+                    nickname:  nickname,
+                    base64: e.target.result,                     
+                });
+            }
+            reader.readAsDataURL(selector.files[0]);
+            return false;
         });
 
-        $('.txt-input').focusout(function () {
-            socket.emit('stop typing', $('#nickname').text());  
+        /* Receive a image*/
+        socket.on('receive a image', function (data) {
+            $('.list-msgs').append($(`<li><img class="msg-img" src="${data.path}"></li>`));
         });
-        
-        socket.on('add active users', function(users){
+
+        /*Trigger event when user's typing*/
+        $('.txt-input').focus(function () {
+            socket.emit('typing', nickname);
+        });
+
+        /*Trigger event when user stop typing*/
+        $('.txt-input').focusout(function () {
+            socket.emit('stop typing', nickname);
+        });
+
+        /* Add participants*/
+        socket.on('add active users', function (users) {
             users.forEach(user => {
                 $('.list-active-users').append($('<li>').text(`${user.nickname} is online`));
-            });            
-        });
-
-        socket.on('new active user', function(nickname){
-            $('.list-active-users').append($('<li>').text(`${nickname} is online`));
-        });
-
-        socket.on('add participants messages', function (msgs) {
-            msgs.forEach(msg => {
-                $('.list-msgs').append($('<li class="msg-nickname">').text(`${msg.nickname}`));
-                $('.list-msgs').append($('<li class="msg-data">').text(`${msg.data}`));
             });
         });
 
+        /*Add new user*/
+        socket.on('new active user', function (nickname) {
+            $('.list-active-users').append($('<li>').text(`${nickname} is online`));
+        });
+
+        /*Add participants messages*/
+        socket.on('add participants messages', function (msgs) {
+            msgs.forEach(msg => {
+                if(msg.type == 'text') {
+                    if(msg.nickname != nickname){
+                        $('.list-msgs').append($('<li class="msg-nickname">').text(`${msg.nickname}`));
+                        $('.list-msgs').append($('<li class="msg-data">').text(`${msg.data}`));
+                    } else {
+                        $('.list-msgs').append($('<li style="" class="msg-owner">').text(`${msg.data}`));                        
+                    }                   
+                } else {
+                    $('.list-msgs').append($(`<li><img class="msg-img" src="${msg.data}"></li>`));
+                }
+            });                      
+        });
+
+        /*Add new message*/
         socket.on('new message', function (msg) {
             $('.list-msgs').append($('<li class="msg-nickname">').text(`${msg.nickname}`));
-            $('.list-msgs').append($('<li class="msg-data">').text(`${msg.data}`));                       
-            const msgs = document.getElementsByClassName("msgs-area")[0];            
-            msgs.scrollTop = msgs.scrollHeight-msgs.clientHeight;        
+            $('.list-msgs').append($('<li class="msg-data">').text(`${msg.data}`));
+            const msgs = document.getElementsByClassName("msgs-area")[0];
+            msgs.scrollTop = msgs.scrollHeight - msgs.clientHeight;
         });
 
+        /*When someone stop typing*/
         socket.on('stop typing', function (nickname) {
-            $('.list-msgs').find(`#${nickname}isTyping`).remove();
+            $('.list-typing-msgs').find(`#${nickname}isTyping`).remove();
         });
 
+        /*When someone's typing*/
         socket.on('typing', function (nickname) {
-            $('.list-msgs').append($(`<li class="msg-typing" id="${nickname}isTyping">`).text(`${nickname} is typing`));
+            $('.list-typing-msgs').append($(`<li class="msg-typing" id="${nickname}isTyping">`).text(`${nickname} is typing`));
         });
-
     });
 </script>
